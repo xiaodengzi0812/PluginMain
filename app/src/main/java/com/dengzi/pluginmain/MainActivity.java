@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import com.dengzi.pluginmain.util.HookStartActivityUtil;
 import com.dengzi.pluginmain.util.hotfix.HotFixManager;
 
 import java.io.File;
@@ -40,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
             hotFixManager.addDex(akpPath);
             Toast.makeText(this, "插件Apk加载成功", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

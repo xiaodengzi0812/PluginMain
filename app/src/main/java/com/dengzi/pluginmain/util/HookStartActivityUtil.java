@@ -3,6 +3,7 @@ package com.dengzi.pluginmain.util;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 
@@ -47,9 +48,16 @@ public class HookStartActivityUtil {
      * @throws Exception
      */
     private void hookStartActivity() throws Exception {
-        // 我们从startActivity()中一路查看源码，最终定位到ActivityManagerNative中的gDefault属性
-        Class<?> ActivityManagerNativeClass = Class.forName("android.app.ActivityManagerNative");
-        Field gDefaultField = ActivityManagerNativeClass.getDeclaredField("gDefault");
+        // android 8.0以上源码有变动
+        Field gDefaultField;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Class<?> ActivityManagerNativeClass = Class.forName("android.app.ActivityManager");
+            gDefaultField = ActivityManagerNativeClass.getDeclaredField("IActivityManagerSingleton");
+        } else {
+            // 我们从startActivity()中一路查看源码，最终定位到ActivityManagerNative中的gDefault属性
+            Class<?> ActivityManagerNativeClass = Class.forName("android.app.ActivityManagerNative");
+            gDefaultField = ActivityManagerNativeClass.getDeclaredField("gDefault");
+        }
         gDefaultField.setAccessible(true);
         Object gDefault = gDefaultField.get(null);
         // 从Singleton中获取IActivityManager
@@ -198,6 +206,5 @@ public class HookStartActivityUtil {
             return method.invoke(iPackageManager, args);
         }
     }
-
 
 }
